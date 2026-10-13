@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8086 Trainer Kit Simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <div>
+      <h1>8086 Trainer Kit Simulator</h1>
+      <p>A working model of the Sastha 8086 trainer: real 8086 instruction set, LCD monitor, keypad and 8255 ports.</p>
+    </div>
+  </div>
+  <nav class="top-actions">
+    <button class="btn ghost" id="btnPower" title="Switch the kit off and on: clears RAM and resets everything">Power cycle</button>
+    <button class="btn ghost" id="btnHelp">Help</button>
+  </nav>
+</header>
+
+<main class="app" id="app">
+
+  <!-- ===================== the kit ===================== -->
+  <section class="kit" aria-label="8086 trainer kit">
+    <input id="kbCapture" aria-label="keyboard input for the kit" autocomplete="off" autocapitalize="off" spellcheck="false" style="position:fixed;left:-200px;top:0;width:10px;opacity:0;font-size:16px">
+    <div class="board-wrap">
+      <div class="board" id="board">
+        <div class="lcd-window" id="lcdWindow"><canvas id="lcd" aria-label="16 by 2 LCD display"></canvas></div>
+      </div>
+    </div>
+    <div class="statusbar" id="status" role="status" aria-live="polite"></div>
+
+    <div class="keyboard" aria-label="Kit keypad">
+      <div class="keypad" id="keypad"></div>
+      <p class="keyhint">Click the keys, or type on your keyboard: <b>0-9, A-F</b>, <b>M</b> MEM, <b>R</b> REG, <b>G</b> GO, <b>S</b> STEP, <b>Enter</b>, <b>&larr; &rarr;</b> PREV/NEXT, <b>:</b> SEG, <b>Del</b> CLR, <b>Esc</b> RESET.</p>
+    </div>
+
+    <div class="runbar">
+      <button class="btn primary" id="btnRun" title="Assemble the program, load it into RAM and run it">Run program</button>
+      <button class="btn" id="btnPause" title="Pause or resume the running program">Pause</button>
+      <button class="btn" id="btnStep" title="Execute one instruction">Step</button>
+      <button class="btn" id="btnReset" title="Same as the RESET button on the kit (RAM is kept)">Reset</button>
+      <label class="speed">Speed
+        <select id="speed">
+          <option value="1">Real time (5 MHz)</option>
+          <option value="10">10x faster</option>
+          <option value="100">100x faster</option>
+          <option value="max">Maximum</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <!-- ===================== program editor ===================== -->
+  <section class="work" aria-label="Assembly program">
+    <div class="panel editor">
+      <div class="panel-head">
+        <h2>Program</h2>
+        <div class="grow"></div>
+        <label class="inline">Examples
+          <select id="exampleSel"><option value="">Choose a program...</option></select>
+        </label>
+      </div>
+
+      <div class="ed-wrap">
+        <div class="gutter" id="gutter" aria-hidden="true"></div>
+        <textarea id="src" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Assembly source code"></textarea>
+      </div>
+
+      <div class="ed-actions">
+        <button class="btn" id="btnAsm">Assemble</button>
+        <button class="btn" id="btnLoad" title="Assemble, reset the kit and load the program into RAM; then press GO on the keypad">Load into kit</button>
+        <button class="btn" id="btnType" title="Assemble, then enter the program byte by byte using the MEM / NEXT keys, exactly as you would on the real kit">Type in with keypad</button>
+        <div class="grow"></div>
+        <label class="inline">Default start
+          <input class="hex4" id="loadSeg" value="0000" maxlength="4" aria-label="Default load segment"> :
+          <input class="hex4" id="loadOff" value="8000" maxlength="4" aria-label="Default load offset">
+        </label>
+      </div>
+
+      <div class="tabs small" role="tablist" id="outTabs">
+        <button role="tab" aria-selected="true" data-tab="msgs">Messages</button>
+        <button role="tab" aria-selected="false" data-tab="listing">Listing</button>
+        <button role="tab" aria-selected="false" data-tab="code">Machine code</button>
+        <button role="tab" aria-selected="false" data-tab="syms">Symbols</button>
+      </div>
+      <div class="out" id="outPane"></div>
+    </div>
+  </section>
+
+  <!-- ===================== inspector ===================== -->
+  <aside class="inspect" aria-label="Inspector">
+    <div class="panel">
+      <div class="tabs" role="tablist" id="inspTabs">
+        <button role="tab" aria-selected="true" data-tab="regs">Registers</button>
+        <button role="tab" aria-selected="false" data-tab="mem">Memory</button>
+        <button role="tab" aria-selected="false" data-tab="dis">Code</button>
+        <button role="tab" aria-selected="false" data-tab="io">I/O ports</button>
+        <button role="tab" aria-selected="false" data-tab="trace">Trace</button>
+        <button role="tab" aria-selected="false" data-tab="set">Settings</button>
+      </div>
+      <div class="insp-pane" id="inspPane"></div>
+    </div>
+  </aside>
+</main>
+
+<dialog id="helpDlg" class="help">
+  <div class="help-head"><h2>How to use the simulator</h2><button class="btn ghost" id="helpClose">Close</button></div>
+  <div class="help-body" id="helpBody"></div>
+</dialog>
+
+<script src="cpu8086.js"></script>
+<script src="asm8086.js"></script>
+<script src="dis8086.js"></script>
+<script src="trainer.js"></script>
+<script src="lcdfont.js"></script>
+<script src="examples.js"></script>
+<script src="help.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
